@@ -154,9 +154,10 @@ export const DoctorsList: React.FC<DoctorsListProps> = ({ doctors, specialties, 
                         {doc.name}
                       </h3>
                       
-                      <div className="flex items-center justify-center gap-1 mb-2 opacity-60">
-                         <Hash className="w-3 h-3" />
-                         <span className="text-[10px] font-mono font-bold tracking-tight">{doc.id}</span>
+                      {/* ID styling updated to match Name style */}
+                      <div className="flex items-center justify-center gap-1 mb-2">
+                         <Hash className="w-4 h-4 text-slate-800" />
+                         <span className="text-sm font-bold text-slate-800">{doc.id}</span>
                       </div>
                       
                       <div className="flex flex-wrap justify-center gap-1">
