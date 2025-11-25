@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -23,6 +22,11 @@
   /* Margen superior seguro para cabeceras (notch + padding) */
   .pt-safe-header {
     padding-top: calc(env(safe-area-inset-top) + 1rem);
+  }
+  
+  /* Margen inferior seguro general */
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
   }
 
   /* Altura segura dinámica */

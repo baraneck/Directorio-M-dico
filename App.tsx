@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Doctor, ViewState } from './types';
 import { StorageService } from './services/storage';
@@ -21,7 +20,7 @@ const Dashboard: React.FC<{ doctors: Doctor[]; onManageSpecialties: () => void }
   }, [activeDoctors]);
 
   return (
-    // Updated padding to use safe area utility
+    // Updated padding to use safe area utility (pt-safe-header)
     <div className="px-6 pb-24 pt-safe-header bg-slate-50 h-full overflow-y-auto">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-slate-800">Resumen Centro</h1>
@@ -233,7 +232,7 @@ export default function App() {
         )}
       </div>
 
-      {/* Navigation Bar with Safe Area padding */}
+      {/* Navigation Bar with Safe Area padding (pb-safe-nav) */}
       <nav className="bg-white border-t border-slate-200 flex justify-around items-center pt-2 pb-safe-nav sticky bottom-0 z-40">
         <NavButton 
           icon={<Users />} 
@@ -290,7 +289,7 @@ const NavButton: React.FC<{ icon: React.ReactNode, label: string, active: boolea
     className={`flex flex-col items-center justify-center w-full p-2 transition-colors ${active ? 'text-primary-600' : 'text-slate-400 hover:text-slate-600'}`}
   >
     <div className={`mb-1 ${active ? 'scale-110' : ''} transition-transform`}>
-      {React.cloneElement(icon as React.ReactElement, { size: 24, strokeWidth: active ? 2.5 : 2 })}
+      {React.cloneElement(icon as React.ReactElement<any>, { size: 24, strokeWidth: active ? 2.5 : 2 })}
     </div>
     <span className="text-[10px] font-medium">{label}</span>
   </button>
