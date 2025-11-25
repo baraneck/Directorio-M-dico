@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Doctor } from '../types';
 import { X, Plus, Hash, Camera } from 'lucide-react';
@@ -83,8 +82,8 @@ export const DoctorForm: React.FC<DoctorFormProps> = ({ initialData, onSave, onC
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-md p-0 sm:p-4 animate-fade-in">
-      {/* Updated max-h to subtract top safe area */}
-      <div className="bg-white w-full max-w-lg rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col h-auto max-h-[calc(100dvh-env(safe-area-inset-top)-2rem)] overflow-hidden">
+      {/* Responsive Modal Container: Bottom sheet on mobile, centered card on Desktop */}
+      <div className="bg-white w-full sm:max-w-xl rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col h-auto max-h-[calc(100dvh-env(safe-area-inset-top)-2rem)] sm:max-h-[90vh] overflow-hidden">
         
         {/* Header */}
         <div className="flex justify-between items-center p-5 border-b bg-slate-50 shrink-0">

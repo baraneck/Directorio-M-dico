@@ -41,7 +41,7 @@ export const DoctorsList: React.FC<DoctorsListProps> = ({ doctors, specialties, 
   return (
     <div className="h-full flex flex-col bg-slate-50 relative">
       
-      {/* Header & Search - Updated with safe area padding */}
+      {/* Header & Search */}
       <div className="sticky top-0 z-10 bg-white shadow-sm border-b pt-safe-header px-4 pb-4 space-y-3">
         <div className="flex justify-between items-center">
           <div>
@@ -51,7 +51,7 @@ export const DoctorsList: React.FC<DoctorsListProps> = ({ doctors, specialties, 
           
           <button 
             onClick={onAddDoctor}
-            className="flex items-center gap-2 bg-primary-600 text-white px-3 py-2 rounded-xl text-sm font-bold shadow-sm active:scale-95 transition-all"
+            className="flex items-center gap-2 bg-primary-600 text-white px-3 py-2 rounded-xl text-sm font-bold shadow-sm active:scale-95 transition-all hover:bg-primary-700 hover:shadow-primary-500/30"
           >
             <Plus className="w-4 h-4" />
             <span className="hidden sm:inline">Nuevo Médico</span>
@@ -59,7 +59,7 @@ export const DoctorsList: React.FC<DoctorsListProps> = ({ doctors, specialties, 
           </button>
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row gap-2">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input
@@ -72,10 +72,11 @@ export const DoctorsList: React.FC<DoctorsListProps> = ({ doctors, specialties, 
           </div>
           <button 
             onClick={() => setShowDisabled(!showDisabled)}
-            className={`px-3 rounded-xl border flex items-center gap-2 transition-colors ${showDisabled ? 'bg-slate-800 text-white border-slate-800' : 'bg-white border-slate-200 text-slate-500'}`}
+            className={`px-3 py-2.5 rounded-xl border flex items-center justify-center gap-2 transition-colors sm:w-auto w-full ${showDisabled ? 'bg-slate-800 text-white border-slate-800' : 'bg-white border-slate-200 text-slate-500'}`}
             title={showDisabled ? "Ocultar deshabilitados" : "Mostrar deshabilitados"}
           >
             {showDisabled ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+            <span className="sm:hidden text-xs font-bold">Inactivos</span>
           </button>
         </div>
 
@@ -108,7 +109,7 @@ export const DoctorsList: React.FC<DoctorsListProps> = ({ doctors, specialties, 
       </div>
 
       {/* List Content */}
-      <div className="flex-1 overflow-y-auto p-4 pb-24 space-y-6">
+      <div className="flex-1 overflow-y-auto p-4 pb-24 md:pb-4 space-y-6">
         {Object.keys(processedDoctors).length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-center opacity-60">
             <div className="bg-slate-100 p-6 rounded-full mb-4">
@@ -132,12 +133,13 @@ export const DoctorsList: React.FC<DoctorsListProps> = ({ doctors, specialties, 
                 </span>
               </div>
               
-              <div className="flex flex-col gap-4">
+              {/* Responsive Grid Layout: 1 col mobile, 2 cols tablet, 3 cols desktop, 4 cols large */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 {(docs as Doctor[]).map(doc => (
                   <div 
                     key={doc.id}
                     onClick={() => onSelectDoctor(doc)}
-                    className={`group bg-white rounded-3xl p-4 shadow-sm border border-slate-200 active:scale-[0.98] transition-all cursor-pointer relative overflow-hidden flex items-center gap-5 hover:shadow-md ${!doc.isActive ? 'opacity-60 grayscale bg-slate-50' : ''}`}
+                    className={`group bg-white rounded-3xl p-4 shadow-sm border border-slate-200 active:scale-[0.98] transition-all cursor-pointer relative overflow-hidden flex items-center gap-5 hover:shadow-md h-full ${!doc.isActive ? 'opacity-60 grayscale bg-slate-50' : ''}`}
                   >
                     {/* Avatar */}
                     <div className="relative shrink-0">
@@ -147,7 +149,7 @@ export const DoctorsList: React.FC<DoctorsListProps> = ({ doctors, specialties, 
                       </div>
                     </div>
 
-                    {/* Main Info - Large Typography */}
+                    {/* Main Info */}
                     <div className="flex-1 min-w-0 py-1">
                       <h3 className="text-lg font-bold text-slate-900 leading-tight mb-1 truncate">
                         {doc.name}
@@ -160,14 +162,14 @@ export const DoctorsList: React.FC<DoctorsListProps> = ({ doctors, specialties, 
                       </div>
                       
                       <div className="flex items-center gap-2">
-                         <span className="text-primary-600 font-bold text-xs uppercase tracking-wide bg-primary-50 px-2 py-0.5 rounded-md">
+                         <span className="text-primary-600 font-bold text-xs uppercase tracking-wide bg-primary-50 px-2 py-0.5 rounded-md truncate max-w-[100px] md:max-w-none">
                            {doc.specialty}
                          </span>
                          {!doc.isActive && <span className="bg-red-100 text-red-600 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">Inactivo</span>}
                       </div>
                     </div>
 
-                    {/* Action Arrow */}
+                    {/* Action Arrow (Visible on hover on desktop) */}
                     <div className="pr-1 text-slate-300 group-hover:text-primary-500 transition-colors">
                       <ChevronRight size={28} strokeWidth={2.5} />
                     </div>
@@ -179,7 +181,7 @@ export const DoctorsList: React.FC<DoctorsListProps> = ({ doctors, specialties, 
         )}
       </div>
 
-      {/* FAB - Add Doctor (Mobile) */}
+      {/* FAB - Add Doctor (Mobile Only) */}
       <button
         onClick={onAddDoctor}
         className="fixed bottom-24 right-6 w-14 h-14 bg-primary-600 text-white rounded-full shadow-lg shadow-primary-600/40 flex items-center justify-center hover:bg-primary-700 hover:scale-105 active:scale-95 transition-all z-20 sm:hidden"

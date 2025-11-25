@@ -4,7 +4,7 @@ import { StorageService } from './services/storage';
 import { DoctorsList } from './pages/DoctorsList';
 import { DoctorForm } from './components/DoctorForm';
 import { SpecialtyManager } from './components/SpecialtyManager';
-import { Users, BarChart3, X, MapPin, Building, Power, Settings, Loader2 } from 'lucide-react';
+import { Users, BarChart3, X, MapPin, Building, Power, Settings, Loader2, Activity } from 'lucide-react';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip } from 'recharts';
 
 // Simple Stats Page
@@ -23,17 +23,22 @@ const Dashboard: React.FC<{ doctors: Doctor[]; onManageSpecialties: () => void }
     // Updated padding to use safe area utility (pt-safe-header)
     <div className="px-6 pb-24 pt-safe-header bg-slate-50 h-full overflow-y-auto">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-slate-800">Resumen Centro</h1>
+        <div>
+          <h1 className="text-2xl font-bold text-slate-800">Resumen Centro</h1>
+          <p className="text-sm text-slate-500 hidden md:block">Estadísticas generales y configuración</p>
+        </div>
         <button 
           onClick={onManageSpecialties}
-          className="p-2 bg-white text-slate-600 rounded-xl border border-slate-200 shadow-sm active:scale-95 transition-all"
+          className="flex items-center gap-2 px-4 py-2 bg-white text-slate-700 font-bold rounded-xl border border-slate-200 shadow-sm active:scale-95 transition-all hover:bg-slate-50"
           title="Gestionar Especialidades"
         >
           <Settings className="w-5 h-5" />
+          <span className="hidden md:inline">Gestionar Especialidades</span>
         </button>
       </div>
       
-      <div className="grid grid-cols-2 gap-4 mb-6">
+      {/* Responsive Grid for Stats */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
           <div className="text-slate-400 text-sm font-medium mb-1">Total Activos</div>
           <div className="text-3xl font-bold text-primary-600">{activeDoctors.length}</div>
@@ -41,6 +46,14 @@ const Dashboard: React.FC<{ doctors: Doctor[]; onManageSpecialties: () => void }
         <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
           <div className="text-slate-400 text-sm font-medium mb-1">Especialidades</div>
           <div className="text-3xl font-bold text-indigo-600">{data.length}</div>
+        </div>
+         <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 hidden md:block">
+          <div className="text-slate-400 text-sm font-medium mb-1">Total Médicos</div>
+          <div className="text-3xl font-bold text-slate-700">{doctors.length}</div>
+        </div>
+         <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 hidden md:block">
+          <div className="text-slate-400 text-sm font-medium mb-1">Estado Sistema</div>
+          <div className="text-xs font-bold text-green-600 bg-green-50 inline-block px-2 py-1 rounded-md mt-1">OPERATIVO</div>
         </div>
       </div>
 
@@ -210,11 +223,45 @@ export default function App() {
   }
 
   return (
-    // Changed h-screen to h-dynamic (100dvh) for mobile browsers
-    <div className="flex flex-col h-dynamic max-w-md mx-auto bg-slate-50 shadow-2xl overflow-hidden relative border-x border-slate-200">
+    // Responsive Layout: Full width on desktop, flex row
+    <div className="flex h-dynamic w-full bg-slate-50 overflow-hidden relative">
       
+      {/* Desktop Sidebar (Visible only on md+) */}
+      <aside className="hidden md:flex flex-col w-64 bg-white border-r border-slate-200 shrink-0 z-20">
+        <div className="p-6 border-b border-slate-100 flex items-center gap-3">
+            <div className="w-10 h-10 bg-primary-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-primary-500/30">
+                <Activity className="w-6 h-6" />
+            </div>
+            <div>
+                <h1 className="font-bold text-slate-800 text-lg leading-tight">CliniGest</h1>
+                <p className="text-xs text-slate-500 font-medium">Gestión Médica</p>
+            </div>
+        </div>
+        
+        <div className="flex-1 p-4 space-y-2">
+            <SidebarButton 
+                icon={<Users />} 
+                label="Directorio Médico" 
+                active={view === ViewState.DOCTORS} 
+                onClick={() => setView(ViewState.DOCTORS)} 
+            />
+            <SidebarButton 
+                icon={<BarChart3 />} 
+                label="Resumen del Centro" 
+                active={view === ViewState.DASHBOARD} 
+                onClick={() => setView(ViewState.DASHBOARD)} 
+            />
+        </div>
+        
+        <div className="p-4 border-t border-slate-100">
+             <div className="text-xs text-slate-400 text-center">
+                 v1.0.0 Stable
+             </div>
+        </div>
+      </aside>
+
       {/* Main Content Area */}
-      <div className="flex-1 overflow-hidden relative">
+      <main className="flex-1 flex flex-col overflow-hidden relative w-full">
         {view === ViewState.DASHBOARD && (
           <Dashboard 
             doctors={doctors} 
@@ -230,10 +277,10 @@ export default function App() {
             onAddDoctor={() => setIsCreating(true)}
           />
         )}
-      </div>
+      </main>
 
-      {/* Navigation Bar with Safe Area padding (pb-safe-nav) */}
-      <nav className="bg-white border-t border-slate-200 flex justify-around items-center pt-2 pb-safe-nav sticky bottom-0 z-40">
+      {/* Mobile Navigation Bar (Visible only on < md) */}
+      <nav className="md:hidden bg-white border-t border-slate-200 flex justify-around items-center pt-2 pb-safe-nav absolute bottom-0 w-full z-40">
         <NavButton 
           icon={<Users />} 
           label="Directorio" 
@@ -294,3 +341,14 @@ const NavButton: React.FC<{ icon: React.ReactNode, label: string, active: boolea
     <span className="text-[10px] font-medium">{label}</span>
   </button>
 );
+
+const SidebarButton: React.FC<{ icon: React.ReactNode, label: string, active: boolean, onClick: () => void }> = ({ icon, label, active, onClick }) => (
+    <button 
+      onClick={onClick}
+      className={`flex items-center gap-3 w-full p-3 rounded-xl transition-all ${active ? 'bg-primary-50 text-primary-700 font-bold' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700'}`}
+    >
+      {React.cloneElement(icon as React.ReactElement<any>, { size: 20, strokeWidth: active ? 2.5 : 2 })}
+      <span className="text-sm">{label}</span>
+      {active && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-primary-500"></div>}
+    </button>
+  );

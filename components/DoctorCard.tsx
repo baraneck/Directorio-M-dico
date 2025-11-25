@@ -11,7 +11,7 @@ export const DoctorCard: React.FC<DoctorCardProps> = ({ doctor, onClick }) => {
   return (
     <div 
       onClick={() => onClick(doctor)}
-      className={`bg-white rounded-2xl p-4 shadow-sm border border-slate-100 active:scale-[0.98] transition-all cursor-pointer flex items-center gap-4 hover:shadow-md ${!doctor.isActive ? 'opacity-60 grayscale bg-slate-50' : ''}`}
+      className={`bg-white rounded-2xl p-4 shadow-sm border border-slate-100 active:scale-[0.98] transition-all cursor-pointer flex items-center gap-4 hover:shadow-md h-full ${!doctor.isActive ? 'opacity-60 grayscale bg-slate-50' : ''}`}
     >
       {/* Avatar with Room Badge */}
       <div className="relative flex-shrink-0 self-center">
