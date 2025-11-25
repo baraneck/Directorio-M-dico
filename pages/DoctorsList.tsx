@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Doctor } from '../types';
-import { Search, Plus, Filter, Eye, EyeOff, Hash, MapPin } from 'lucide-react';
+import { Search, Plus, Filter, Eye, EyeOff, Hash } from 'lucide-react';
 
 interface DoctorsListProps {
   doctors: Doctor[];
@@ -128,7 +128,7 @@ export const DoctorsList: React.FC<DoctorsListProps> = ({ doctors, specialties, 
               </div>
               
               {/* COMPACT GRID LAYOUT: 2 Columns on Mobile, 3 on Tablet, etc. */}
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2.5">
                 {(docs as Doctor[]).map(doc => (
                   <div 
                     key={doc.id}
@@ -139,7 +139,8 @@ export const DoctorsList: React.FC<DoctorsListProps> = ({ doctors, specialties, 
                     <div className="relative mb-3">
                       <img 
                         src={doc.avatarUrl} 
-                        className="w-16 h-16 rounded-full object-cover shadow-sm bg-slate-100 border-2 border-slate-50 group-hover:scale-105 transition-transform" 
+                        alt={doc.name}
+                        className="w-14 h-14 sm:w-16 sm:h-16 rounded-full object-cover shadow-sm bg-slate-100 border-2 border-slate-50 group-hover:scale-105 transition-transform" 
                       />
                       {/* Room Badge - Prominent */}
                       <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-indigo-600 text-white text-[9px] font-bold px-2 py-0.5 rounded-full border-2 border-white shadow-sm flex items-center gap-0.5 whitespace-nowrap z-10">
