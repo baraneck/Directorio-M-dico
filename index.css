@@ -1,0 +1,32 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html, body, #root {
+    height: 100%;
+    /* dvh = Dynamic Viewport Height. Se ajusta cuando la barra de URL aparece/desaparece */
+    height: 100dvh; 
+    overflow: hidden; /* Evita el rebote de scroll en toda la página */
+    overscroll-behavior: none;
+    background-color: #f8fafc; /* bg-slate-50 */
+  }
+}
+
+@layer utilities {
+  /* Margen inferior seguro para la navegación (gesto + padding) */
+  .pb-safe-nav {
+    padding-bottom: calc(env(safe-area-inset-bottom) + 0.5rem);
+  }
+  
+  /* Margen superior seguro para cabeceras (notch + padding) */
+  .pt-safe-header {
+    padding-top: calc(env(safe-area-inset-top) + 1rem);
+  }
+
+  /* Altura segura dinámica */
+  .h-dynamic {
+    height: 100dvh;
+  }
+}

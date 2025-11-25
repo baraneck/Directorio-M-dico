@@ -1,0 +1,5 @@
+{
+  "name": "CliniGest Mobile",
+  "description": "Aplicación de gestión clínica para administración de médicos, especialidades, mutuas y agenda diaria.",
+  "requestFramePermissions": []
+}
