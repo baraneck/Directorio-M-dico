@@ -128,12 +128,12 @@ export const DoctorsList: React.FC<DoctorsListProps> = ({ doctors, specialties, 
               </div>
               
               {/* COMPACT GRID LAYOUT: 2 Columns on Mobile, 3 on Tablet, etc. */}
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2.5">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
                 {(docs as Doctor[]).map(doc => (
                   <div 
                     key={doc.id}
                     onClick={() => onSelectDoctor(doc)}
-                    className={`group bg-white rounded-2xl p-3 shadow-sm border border-slate-200 active:scale-[0.98] transition-all cursor-pointer relative overflow-hidden flex flex-col items-center text-center hover:shadow-md hover:border-primary-200 ${!doc.isActive ? 'opacity-60 grayscale bg-slate-50' : ''}`}
+                    className={`group bg-white rounded-2xl p-2.5 shadow-sm border border-slate-200 active:scale-[0.98] transition-all cursor-pointer relative overflow-hidden flex flex-col items-center text-center hover:shadow-md hover:border-primary-200 ${!doc.isActive ? 'opacity-60 grayscale bg-slate-50' : ''}`}
                   >
                     {/* Avatar & Room Badge */}
                     <div className="relative mb-3">
