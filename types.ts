@@ -25,5 +25,6 @@ export interface Appointment {
 export enum ViewState {
   DASHBOARD = 'DASHBOARD',
   DOCTORS = 'DOCTORS',
+  LIST = 'LIST',
   SETTINGS = 'SETTINGS'
 }

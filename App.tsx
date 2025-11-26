@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Doctor, ViewState } from './types';
 import { StorageService } from './services/storage';
 import { DoctorsList } from './pages/DoctorsList';
+import { SimpleList } from './pages/SimpleList';
 import { DoctorForm } from './components/DoctorForm';
 import { SpecialtyManager } from './components/SpecialtyManager';
-import { Users, BarChart3, X, MapPin, Building, Power, Settings, Loader2, Activity } from 'lucide-react';
+import { Users, BarChart3, X, MapPin, Building, Power, Settings, Loader2, Activity, List } from 'lucide-react';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip } from 'recharts';
 
 // Simple Stats Page
@@ -246,6 +247,12 @@ export default function App() {
                 onClick={() => setView(ViewState.DOCTORS)} 
             />
             <SidebarButton 
+                icon={<List />} 
+                label="Listado Rápido" 
+                active={view === ViewState.LIST} 
+                onClick={() => setView(ViewState.LIST)} 
+            />
+            <SidebarButton 
                 icon={<BarChart3 />} 
                 label="Resumen del Centro" 
                 active={view === ViewState.DASHBOARD} 
@@ -277,6 +284,13 @@ export default function App() {
             onAddDoctor={() => setIsCreating(true)}
           />
         )}
+
+        {view === ViewState.LIST && (
+          <SimpleList 
+            doctors={doctors}
+            onSelectDoctor={setSelectedDoctor}
+          />
+        )}
       </main>
 
       {/* Mobile Navigation Bar (Visible only on < md) */}
@@ -286,6 +300,12 @@ export default function App() {
           label="Directorio" 
           active={view === ViewState.DOCTORS} 
           onClick={() => setView(ViewState.DOCTORS)} 
+        />
+        <NavButton 
+          icon={<List />} 
+          label="Listado" 
+          active={view === ViewState.LIST} 
+          onClick={() => setView(ViewState.LIST)} 
         />
         <NavButton 
           icon={<BarChart3 />} 
