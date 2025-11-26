@@ -1,4 +1,4 @@
-import { Doctor, Appointment } from '../types';
+import { Doctor, Appointment, BackupData } from '../types';
 
 const DB_NAME = 'clinigest_db';
 const STORE_NAME = 'store';
@@ -108,5 +108,27 @@ export const StorageService = {
   
   // Keep sync signature just in case to prevent crash, but warn
   getAppointments: () => [],
-  saveAppointments: () => {} 
+  saveAppointments: () => {},
+
+  // --- Backup Functions ---
+  createBackup: async (): Promise<BackupData> => {
+    const doctors = (await get<Doctor[]>(DOCTORS_KEY)) || [];
+    const specialties = (await get<string[]>(SPECIALTIES_KEY)) || DEFAULT_SPECIALTIES;
+    
+    return {
+      version: 1,
+      timestamp: new Date().toISOString(),
+      doctors,
+      specialties
+    };
+  },
+
+  restoreBackup: async (data: BackupData): Promise<void> => {
+    if (data.doctors && Array.isArray(data.doctors)) {
+      await set(DOCTORS_KEY, data.doctors);
+    }
+    if (data.specialties && Array.isArray(data.specialties)) {
+      await set(SPECIALTIES_KEY, data.specialties);
+    }
+  }
 };

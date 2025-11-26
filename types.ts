@@ -28,3 +28,10 @@ export enum ViewState {
   LIST = 'LIST',
   SETTINGS = 'SETTINGS'
 }
+
+export interface BackupData {
+  version: number;
+  timestamp: string;
+  doctors: Doctor[];
+  specialties: string[];
+}

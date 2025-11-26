@@ -1,16 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { Doctor, ViewState } from './types';
+import React, { useState, useEffect, useRef } from 'react';
+import { Doctor, ViewState, BackupData } from './types';
 import { StorageService } from './services/storage';
 import { DoctorsList } from './pages/DoctorsList';
 import { SimpleList } from './pages/SimpleList';
 import { DoctorForm } from './components/DoctorForm';
 import { SpecialtyManager } from './components/SpecialtyManager';
-import { Users, BarChart3, X, MapPin, Building, Power, Settings, Loader2, Activity, List } from 'lucide-react';
+import { Users, BarChart3, X, MapPin, Building, Power, Settings, Loader2, Activity, List, Download, Upload, AlertCircle } from 'lucide-react';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip } from 'recharts';
 
 // Simple Stats Page
-const Dashboard: React.FC<{ doctors: Doctor[]; onManageSpecialties: () => void }> = ({ doctors, onManageSpecialties }) => {
+const Dashboard: React.FC<{ 
+  doctors: Doctor[]; 
+  onManageSpecialties: () => void;
+  onImportSuccess: () => void; 
+}> = ({ doctors, onManageSpecialties, onImportSuccess }) => {
   const activeDoctors = doctors.filter(d => d.isActive);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   const data = React.useMemo(() => {
     const counts: Record<string, number> = {};
@@ -20,6 +25,59 @@ const Dashboard: React.FC<{ doctors: Doctor[]; onManageSpecialties: () => void }
     return Object.entries(counts).map(([name, count]) => ({ name, count }));
   }, [activeDoctors]);
 
+  const handleExport = async () => {
+    try {
+      const backup = await StorageService.createBackup();
+      const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `clinigest_backup_${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      alert('Error al crear la copia de seguridad');
+      console.error(e);
+    }
+  };
+
+  const handleImportClick = () => {
+    if (window.confirm('ADVERTENCIA: Al importar una copia de seguridad se reemplazarán los datos actuales. ¿Desea continuar?')) {
+      fileInputRef.current?.click();
+    }
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      try {
+        const json = event.target?.result as string;
+        const backupData: BackupData = JSON.parse(json);
+        
+        // Basic validation
+        if (!backupData.doctors || !Array.isArray(backupData.doctors)) {
+          throw new Error('Formato de archivo inválido');
+        }
+
+        await StorageService.restoreBackup(backupData);
+        alert('Datos restaurados correctamente.');
+        onImportSuccess(); // Refresh app state
+      } catch (error) {
+        alert('Error al leer el archivo de copia de seguridad. Asegúrese de que es un archivo .json válido generado por esta aplicación.');
+        console.error(error);
+      }
+      // Reset input
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    };
+    reader.readAsText(file);
+  };
+
   return (
     // Updated padding to use safe area utility (pt-safe-header)
     <div className="px-6 pb-24 pt-safe-header bg-slate-50 h-full overflow-y-auto">
@@ -28,14 +86,6 @@ const Dashboard: React.FC<{ doctors: Doctor[]; onManageSpecialties: () => void }
           <h1 className="text-2xl font-bold text-slate-800">Resumen Centro</h1>
           <p className="text-sm text-slate-500 hidden md:block">Estadísticas generales y configuración</p>
         </div>
-        <button 
-          onClick={onManageSpecialties}
-          className="flex items-center gap-2 px-4 py-2 bg-white text-slate-700 font-bold rounded-xl border border-slate-200 shadow-sm active:scale-95 transition-all hover:bg-slate-50"
-          title="Gestionar Especialidades"
-        >
-          <Settings className="w-5 h-5" />
-          <span className="hidden md:inline">Gestionar Especialidades</span>
-        </button>
       </div>
       
       {/* Responsive Grid for Stats */}
@@ -70,6 +120,51 @@ const Dashboard: React.FC<{ doctors: Doctor[]; onManageSpecialties: () => void }
             </BarChart>
           </ResponsiveContainer>
         </div>
+      </div>
+
+      {/* Data Management Section */}
+      <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 mb-6">
+        <h3 className="font-bold text-slate-700 mb-4 flex items-center gap-2">
+          <Settings className="w-5 h-5 text-slate-400" />
+          Gestión de Datos
+        </h3>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <button 
+            onClick={onManageSpecialties}
+            className="flex items-center justify-center gap-2 px-4 py-4 bg-slate-50 text-slate-700 font-bold rounded-xl border border-slate-200 hover:bg-slate-100 transition-colors"
+          >
+            <List className="w-5 h-5" />
+            Editar Especialidades
+          </button>
+          
+          <button 
+            onClick={handleExport}
+            className="flex items-center justify-center gap-2 px-4 py-4 bg-indigo-50 text-indigo-700 font-bold rounded-xl border border-indigo-100 hover:bg-indigo-100 transition-colors"
+          >
+            <Download className="w-5 h-5" />
+            Exportar Backup
+          </button>
+          
+          <button 
+            onClick={handleImportClick}
+            className="flex items-center justify-center gap-2 px-4 py-4 bg-amber-50 text-amber-700 font-bold rounded-xl border border-amber-100 hover:bg-amber-100 transition-colors"
+          >
+            <Upload className="w-5 h-5" />
+            Importar Backup
+          </button>
+          <input 
+            type="file" 
+            ref={fileInputRef} 
+            onChange={handleFileChange} 
+            accept=".json" 
+            className="hidden" 
+          />
+        </div>
+        <p className="mt-4 text-xs text-slate-400 flex items-center gap-1.5">
+          <AlertCircle className="w-3.5 h-3.5" />
+          Use Exportar/Importar para transferir sus datos a otro dispositivo o guardar una copia de seguridad.
+        </p>
       </div>
     </div>
   );
@@ -171,14 +266,16 @@ export default function App() {
   const [isManagingSpecialties, setIsManagingSpecialties] = useState(false);
 
   // Initial Load (Async)
+  const loadData = async () => {
+    setLoading(true);
+    const docs = await StorageService.getDoctors();
+    const specs = await StorageService.getSpecialties();
+    setDoctors(docs);
+    setSpecialties(specs);
+    setLoading(false);
+  };
+
   useEffect(() => {
-    const loadData = async () => {
-      const docs = await StorageService.getDoctors();
-      const specs = await StorageService.getSpecialties();
-      setDoctors(docs);
-      setSpecialties(specs);
-      setLoading(false);
-    };
     loadData();
   }, []);
 
@@ -273,6 +370,7 @@ export default function App() {
           <Dashboard 
             doctors={doctors} 
             onManageSpecialties={() => setIsManagingSpecialties(true)}
+            onImportSuccess={loadData}
           />
         )}
         
