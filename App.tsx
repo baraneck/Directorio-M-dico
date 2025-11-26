@@ -179,9 +179,13 @@ const DoctorDetail: React.FC<{
 }> = ({ doctor, onClose, onEdit, onToggleStatus }) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
-      <div className="bg-white w-full max-w-md rounded-3xl overflow-hidden shadow-2xl max-h-[90dvh] flex flex-col">
-        <div className={`relative h-32 shrink-0 bg-gradient-to-r ${doctor.isActive ? 'from-primary-600 to-indigo-600' : 'from-slate-400 to-slate-500'}`}>
-          <button onClick={onClose} className="absolute top-4 right-4 p-2 bg-white/20 hover:bg-white/30 rounded-full text-white transition-colors">
+      {/* 
+         Removed flex-col and moved overflow-y-auto here to allow negative margin image overlap 
+         without clipping. 
+      */}
+      <div className="bg-white w-full max-w-md rounded-3xl overflow-y-auto shadow-2xl max-h-[90dvh] relative no-scrollbar">
+        <div className={`relative h-32 w-full bg-gradient-to-r ${doctor.isActive ? 'from-primary-600 to-indigo-600' : 'from-slate-400 to-slate-500'}`}>
+          <button onClick={onClose} className="absolute top-4 right-4 p-2 bg-white/20 hover:bg-white/30 rounded-full text-white transition-colors z-10">
             <X className="w-5 h-5" />
           </button>
           {!doctor.isActive && (
@@ -191,8 +195,8 @@ const DoctorDetail: React.FC<{
           )}
         </div>
         
-        <div className="px-6 pb-6 relative overflow-y-auto">
-          <div className="flex justify-between items-end -mt-12 mb-4">
+        <div className="px-6 pb-6 relative">
+          <div className="flex justify-between items-end -mt-12 mb-4 relative z-10">
             <img 
               src={doctor.avatarUrl} 
               alt={doctor.name} 
